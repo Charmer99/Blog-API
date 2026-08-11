@@ -92,7 +92,127 @@ app.post("/api/posts", authenticateToken, async (req, res) => {
   res.json(post);
 });
 
+app.get("/api/posts/:id", async(req, res) => {
+    const post = await prisma.post.findUnique({
+        where: {
+            id: Number(req.params.id)
+        }
+    })
 
+    if(!post) {
+        return res.status(404).json({
+            message: "Post not found"
+        })
+    }
+
+
+
+    res.json(post)
+})
+
+app.put("/api/posts/:id", authenticateToken,async(req, res) => {
+    const { title, content, published } = req.body;
+
+    const post = await prisma.post.findUnique({
+        where: {
+            id: Number(req.params.id)
+        }
+    })
+
+
+    if (!post){
+        return res.status(404).json({
+            message: "post not found"
+        })
+
+    }
+
+
+    if (post.authorId !== req.user.id) {
+        return res.status(403).json({
+            message: "You are not allowed to edit this post "
+        })
+    }
+
+
+    const updatedPost = await prisma.post.update({
+        where: {
+            id: Number(req.params.id)
+        },
+        data: {
+            title,
+            content,
+            published
+        }
+    })
+
+    res.json(updatedPost)
+})
+
+
+app.delete("/api/posts/:id", authenticateToken, async(req, res) => {
+
+    const post = await prisma.post.findUnique({
+        where : {
+            id : Number(req.params.id)
+        }
+    })
+
+    if(!post){
+        return res.status(404).json({
+            message : "Post not found"
+        })
+    }
+
+    if (post.authorId !== req.user.id){
+        return res.status(403).json({
+            message : "You are not allowed to delete this post"
+        })
+    }
+
+    await prisma.post.delete({
+        where : {
+            id : post.id
+        }
+    })
+
+    res.json({
+        message: "Post deleted successfully"
+    })
+
+})
+
+app.patch("/api/posts/:id/publish", authenticateToken, async(req, res) => {
+    const post = await prisma.post.findUnique({
+        where : {
+            id: Number(req.params.id)
+        }
+    })
+
+    if(!post) {
+        return res.status(404).json({
+            message : "post not found"
+        })
+    }
+
+    if(post.authorId !== req.user.id){
+        return res.status(403).json({
+            message: "You are not allowed to publish this post"
+        })
+    }
+
+    const updatedPost = await prisma.post.update({
+        where: {
+            id: post.id
+        },
+
+        data: {
+            published: !post.published
+        }
+    })
+
+    res.json(updatedPost)
+})
 
 const PORT = 3000;
 
