@@ -214,6 +214,77 @@ app.patch("/api/posts/:id/publish", authenticateToken, async(req, res) => {
     res.json(updatedPost)
 })
 
+
+app.post("/api/posts/:id/comments", authenticateToken, async (req, res) => {
+  const { content } = req.body;
+
+  const post = await prisma.post.findUnique({
+    where: {
+      id: Number(req.params.id)
+    }
+  });
+
+  if (!post) {
+    return res.status(404).json({
+      message: "Post not found"
+    });
+  }
+
+  const comment = await prisma.comment.create({
+    data: {
+      content,
+      username: req.user.username,
+      postId: post.id,
+      userId : req.user.id
+    }
+  });
+
+  res.json(comment);
+});
+
+
+app.get("/api/posts/:id/comments", async (req, res) => {
+    const comments = await prisma.comment.findMany({
+        where : {
+            postId: Number(req.params.id)
+        }
+    })
+
+    res.json({ comments })
+})
+
+app.delete("/api/comment/:id", authenticateToken,(req, res) => {
+
+    const comment = await prisma.comment.findUnique({
+        where : {
+            id: Number(req.params.id)
+        }
+    })
+
+    if(!comment) {
+        return res.status(404).json({
+            message: "Message not found"
+        })
+    }
+
+    if(comment.userId !== req.params.id){
+        return res.status(404).json({
+            message: "You are not allowed to delete this comment"
+        })
+    }
+
+
+    await prisma.comment.delete({
+        where : {
+            id: comment.Id
+        }
+    })
+
+    res.json({
+        message : "message deleted successfully"
+    })
+} )
+
 const PORT = 3000;
 
 app.listen(PORT, () => {
