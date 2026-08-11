@@ -1,0 +1,1 @@
+DROP DATABASE IF EXISTS blog_api; CREATE DATABASE blog_api TEMPLATE template0;
