@@ -20,6 +20,8 @@ model User {
   createdAt DateTime @default(now())
 
   posts Post[]
+
+  comments Comment[]
 }
 
 model Post {
@@ -45,4 +47,7 @@ model Comment {
 
   postId Int
   post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
 }

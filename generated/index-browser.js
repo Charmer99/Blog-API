@@ -144,7 +144,8 @@ exports.Prisma.CommentScalarFieldEnum = {
   username: 'username',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  postId: 'postId'
+  postId: 'postId',
+  userId: 'userId'
 };
 
 exports.Prisma.SortOrder = {
