@@ -1,3 +1,5 @@
+// app.js
+
 const dotenv = require("dotenv");
 dotenv.config({ override: true });
 
@@ -11,12 +13,16 @@ const authRoutes = require("./routes/authRoutes")
 const postRoutes = require("./routes/postRoutes")
 const commentRoutes = require("./routes/commentRoutes")
 
+
 const app = express();
 app.use(express.json());
+
+app.set("view engine", "ejs");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/posts",postRoutes );
 app.use("/api", commentRoutes)
+
 
 // Error handler MUST come after the routes.
 app.use(errorHandler);

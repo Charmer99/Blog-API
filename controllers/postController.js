@@ -1,8 +1,24 @@
+// postController.js
+
 const prisma = require("../db/prisma")
+
+
 
 
 // Fetch all blog posts from the database.
 exports.fetchPosts =  async (req, res) => {
+  const posts = await prisma.post.findMany({
+    where: {
+      published: true
+    }
+  });
+
+  res.json({ posts });
+};
+
+
+// Fetch all posts for the author dashboard.
+exports.fetchAllPosts = async (req, res) => {
   const posts = await prisma.post.findMany();
 
   res.json({ posts });
@@ -20,14 +36,15 @@ exports.createPost = async (req, res) => {
     },
   });
 
-  res.json(post);
+  res.status(201).json(post);
 };
 
 // Get one post. 
 exports.getOnePost =async (req, res) => {
-  const post = await prisma.post.findUnique({
+  const post = await prisma.post.findFirst({
     where: {
       id: Number(req.params.id),
+      published: true
     },
   });
 
@@ -101,10 +118,10 @@ exports.deletePost =  async (req, res) => {
       id: post.id,
     },
   });
-
-  res.json({
-    message: "Post deleted successfully",
-  });
+  
+//204 means: The operation succeeded, 
+// but there is no response body.
+  res.status(204).send();
 };
 
 // Publish/unpublish a post.

@@ -22,6 +22,8 @@ model User {
   posts Post[]
 
   comments Comment[]
+
+  role String @default("user")
 }
 
 model Post {

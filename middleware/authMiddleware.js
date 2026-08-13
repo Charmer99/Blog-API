@@ -1,3 +1,5 @@
+// authMiddleware.js
+
 const { json } = require("express");
 const jwt = require("jsonwebtoken");
 
@@ -25,5 +27,7 @@ function authenticateToken(req, res, next) {
         next()
     })
 }
+
+
 
 module.exports = authenticateToken;

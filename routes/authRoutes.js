@@ -1,3 +1,5 @@
+// authRoutes.js
+
 //module imports
 const { Router } = require("express");
 
@@ -10,14 +12,26 @@ const prisma = require("../db/prisma")
 const authenticateToken = require("../middleware/authMiddleware");
 const asyncHandler = require("../middleware/asyncHandler");
 const authController = require("../controllers/authControllers")
-const { registerValidation, loginValidation, validationHandler } = require("../middleware/validation")
+
+const { 
+    registerValidation, 
+    loginValidation, 
+    validationHandler } 
+    = require("../middleware/validation")
 
 const router = Router()
 
 //register route
-router.post("/register",registerValidation, validationHandler, asyncHandler(authController.register));
+router.post(
+    "/register",
+    registerValidation, 
+    validationHandler, 
+    asyncHandler(authController.register));
 
 //login route
-router.post("/login", loginValidation, validationHandler, asyncHandler(authController.login));
+router.post("/login",
+     loginValidation,
+    validationHandler,
+    asyncHandler(authController.login));
 
 module.exports = router;

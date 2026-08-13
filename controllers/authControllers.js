@@ -1,3 +1,4 @@
+// authControllers.js
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -8,6 +9,19 @@ const prisma = require("../db/prisma")
 exports.register = async (req, res) => {
   const { username, email, password } = req.body;
 
+
+  const existingUser = await prisma.user.findUnique({
+    where: {
+      email
+    }
+  })
+
+  if(existingUser) {
+    return res.status(409).json({
+      message: "Email is already registered"
+    })
+  }
+
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await prisma.user.create({
@@ -15,10 +29,11 @@ exports.register = async (req, res) => {
       username,
       email,
       password: hashedPassword,
+
     },
   });
 
-  res.json(user);
+  res.status(201).json(user);
 };
 
 //login controller
@@ -49,6 +64,7 @@ exports.login =  async (req, res) => {
     {
       id: user.id,
       username: user.username,
+      role: user.role
     },
     process.env.JWT_SECRET,
     {

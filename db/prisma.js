@@ -1,3 +1,5 @@
+// prisma.js
+
 const { PrismaClient } = require("../generated")
 const { PrismaPg } = require("@prisma/adapter-pg")
 

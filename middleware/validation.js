@@ -1,10 +1,14 @@
-const { body, validationResult } = require("express-validator");
+// validation.js
+
+const { body, param, validationResult } = require("express-validator");
 
 const registerValidation = [
   body("username")
     .trim()
     .notEmpty()
-    .withMessage("Username is required"),
+    .withMessage("Username is required")
+    .isLength({min: 3, max: 30})
+    .withMessage("username must be between 3 and 30 characters"),
 
   body("email")
     .isEmail()
@@ -26,6 +30,48 @@ const loginValidation = [
         .withMessage("Password is required")
 ]
 
+const postValidation = [
+    body("title")
+        .trim()
+        .notEmpty()
+        .withMessage("Title is required"),
+
+    body('content')
+        .trim()
+        .notEmpty()
+        .withMessage("Content is required")
+]
+
+const updatePostValidation = [
+    body("title")
+        .trim()
+        .notEmpty()
+        .withMessage("title is required"),
+
+    body("content")
+        .trim()
+        .notEmpty()
+        .withMessage("Content is required"),
+
+    body("published")
+        .optional()
+        .isBoolean()
+        .withMessage("Published must be true or false"),
+    ]
+
+const commentValidation = [
+    body("content")
+        .trim()
+        .notEmpty()
+        .withMessage("Comment content is required")
+]
+
+const idValidation = [
+    param("id")
+        .isInt({min: 1})
+        .withMessage("Id must be a postive integer")
+]
+
 const validationHandler = (req, res, next) => {
     const errors = validationResult(req);
 
@@ -40,5 +86,9 @@ const validationHandler = (req, res, next) => {
 module.exports = {
   registerValidation,
   loginValidation,
+  postValidation,
+  updatePostValidation,
+  commentValidation,
+  idValidation,
   validationHandler,
 };

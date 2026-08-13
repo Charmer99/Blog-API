@@ -1,3 +1,5 @@
+// commentController.js
+
 const prisma = require("../db/prisma")
 
 
@@ -8,6 +10,7 @@ exports.createComment = async (req, res) => {
   const post = await prisma.post.findUnique({
     where: {
       id: Number(req.params.id),
+      published: true
     },
   });
 
@@ -42,6 +45,7 @@ exports.getComments = async (req, res) => {
   const comments = await prisma.comment.findMany({
     where: {
       postId: Number(req.params.id),
+
     },
   });
 
@@ -62,7 +66,7 @@ exports.deleteComment =  async (req, res) => {
     });
   }
 
-  if (comment.userId !== req.user.id) {
+  if (comment.userId !== req.user.id && req.user.role !== "author") {
     return res.status(403).json({
       message: "You are not allowed to delete this comment",
     });
@@ -73,6 +77,16 @@ exports.deleteComment =  async (req, res) => {
       id: comment.id,
     },
   });
+
+  exports.getAllComments = async (req, res) => {
+  const comments = await prisma.comment.findMany({
+    orderBy: {
+      id: "desc",
+    },
+  });
+
+  res.json({ comments });
+};
 
   res.json({
     message: "Comment deleted successfully",
