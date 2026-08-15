@@ -60,6 +60,12 @@ const updatePostValidation = [
     ]
 
 const commentValidation = [
+
+     body("username")
+    .trim()
+    .notEmpty()
+    .withMessage("Username is required"),
+    
     body("content")
         .trim()
         .notEmpty()

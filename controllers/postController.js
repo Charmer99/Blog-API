@@ -58,7 +58,7 @@ exports.getOnePost =async (req, res) => {
 };
 
 // Update a post.
-exports.updatePost =  async (req, res) => {
+exports.updatePost = async (req, res) => {
   const { title, content, published } = req.body;
 
   const post = await prisma.post.findUnique({
@@ -73,9 +73,9 @@ exports.updatePost =  async (req, res) => {
     });
   }
 
-  if (post.authorId !== req.user.id) {
+  if (req.user.role !== "author") {
     return res.status(403).json({
-      message: "You are not allowed to edit this post",
+      message: "Author access required",
     });
   }
 

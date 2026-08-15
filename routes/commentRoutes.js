@@ -10,6 +10,9 @@ const commentController =  require("../controllers/commentController")
 const authenticateToken = require("../middleware/authMiddleware");
 const asyncHandler = require("../middleware/asyncHandler");
 
+
+const authorizeAuthor = require("../middleware/authorizeAuthor");
+
 const { commentValidation, 
     validationHandler }
     = require("../middleware/validation")
@@ -22,10 +25,16 @@ router.get(
   authorizeAuthor,
   asyncHandler(commentController.getAllComments)
 );
+
+router.get(
+  "/comments/admin",
+  authenticateToken,
+  authorizeAuthor,
+  asyncHandler(commentController.getAllComments)
+);
 // Create a comment.
 router.post(
     "/posts/:id/comments",
-     authenticateToken,
      commentValidation, 
      validationHandler,
       asyncHandler(commentController.createComment));

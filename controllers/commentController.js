@@ -3,9 +3,19 @@
 const prisma = require("../db/prisma")
 
 
+
+exports.getAllComments = async (req, res) => {
+  const comments = await prisma.comment.findMany({
+    orderBy: {
+      id: "desc"
+    }
+  });
+
+  res.json({ comments });
+};
 // Create a comment.
 exports.createComment = async (req, res) => {
-  const { content } = req.body;
+  const { username, content } = req.body;
 
   const post = await prisma.post.findUnique({
     where: {
@@ -23,15 +33,10 @@ exports.createComment = async (req, res) => {
   const comment = await prisma.comment.create({
     data: {
       content,
-      username: req.user.username,
+      username,
       post: {
         connect: {
           id: post.id,
-        },
-      },
-      user: {
-        connect: {
-          id: req.user.id,
         },
       },
     },
